@@ -28,28 +28,33 @@ const looper = (): Context => {
 describe("human/modeRouterFunction", () => {
   test("correctly recognizes the `input` mode when context is empty", () => {
     const context: Context[] = [];
-    const result = modeRouterFunction({ context });
+    const wires = {};
+    const result = modeRouterFunction({ context, wires });
     deepStrictEqual(result, { input: context });
   });
   test("correctly recognizes the `input` mode", () => {
     const context: Context[] = [text("Hello", "user")];
-    const result = modeRouterFunction({ context });
+    const wires = {};
+    const result = modeRouterFunction({ context, wires });
     deepStrictEqual(result, { input: context });
   });
   test("correctly recognizes the `input-output` mode", () => {
     const context: Context[] = [text("Hello", "model")];
-    const result = modeRouterFunction({ context });
+    const wires = {};
+    const result = modeRouterFunction({ context, wires });
     deepStrictEqual(result, { input: context, output: context });
   });
   test("correctly recognizes the `choose` mode", () => {
     {
       const context: Context[] = [looper()];
-      const result = modeRouterFunction({ context });
+      const wires = {};
+      const result = modeRouterFunction({ context, wires });
       deepStrictEqual(result, { input: context, output: context });
     }
     {
       const context: Context[] = [split("end", "1")];
-      const result = modeRouterFunction({ context });
+      const wires = {};
+      const result = modeRouterFunction({ context, wires });
       deepStrictEqual(result, { output: context, input: context });
     }
     {
@@ -58,12 +63,14 @@ describe("human/modeRouterFunction", () => {
         split("next", "1"),
         split("end", "1"),
       ];
-      const result = modeRouterFunction({ context });
+      const wires = { outgoing: ["foo"] };
+      const result = modeRouterFunction({ context, wires });
       deepStrictEqual(result, { output: context, choose: context });
     }
     {
       const context: Context[] = [split("start", "1"), split("end", "1")];
-      const result = modeRouterFunction({ context });
+      const wires = {};
+      const result = modeRouterFunction({ context, wires });
       deepStrictEqual(result, { output: context, input: context });
     }
     {
@@ -72,7 +79,8 @@ describe("human/modeRouterFunction", () => {
         split("next", "1"),
         split("end", "1"),
       ];
-      const result = modeRouterFunction({ context });
+      const wires = {};
+      const result = modeRouterFunction({ context, wires });
       deepStrictEqual(result, { output: context, input: context });
     }
   });

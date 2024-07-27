@@ -220,7 +220,7 @@ test("correctly invoke a lambda", async (t) => {
   );
 
   const result = await board.runOnce({ foo: "bar" }, { kits: [kit] });
-  t.deepEqual(result, { foo: "bar" });
+  t.like(result, { foo: "bar" });
 });
 
 test("throws when incorrectly wiring different boards", async (t) => {

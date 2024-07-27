@@ -90,7 +90,7 @@ test("sending a real board to a map", async (t) => {
   input.wire("list->", map);
   map.wire("list->", board.output());
   const outputs = await board.runOnce({ list: [1, 2, 3] });
-  t.deepEqual(outputs, {
+  t.like(outputs, {
     list: [
       { index: 0, item: 1, list: [1, 2, 3] },
       { index: 1, item: 2, list: [1, 2, 3] },
@@ -109,7 +109,7 @@ test("using lambda syntactic sugar (JS)", async (t) => {
   input.wire("list->", map);
   map.wire("list->", board.output());
   const outputs = await board.runOnce({ list: [1, 2, 3] });
-  t.deepEqual(outputs, {
+  t.like(outputs, {
     list: [
       { index: 0, item: 1, list: [1, 2, 3] },
       { index: 1, item: 2, list: [1, 2, 3] },
@@ -130,7 +130,7 @@ test("using lambda syntactic sugar (JS, with config)", async (t) => {
   input.wire("list->", map);
   map.wire("list->", board.output());
   const outputs = await board.runOnce({ list: [1, 2, 3] });
-  t.deepEqual(outputs, {
+  t.like(outputs, {
     list: [
       { index: 0, item: 1, list: [1, 2, 3] },
       { index: 1, item: 2, list: [1, 2, 3] },
@@ -150,7 +150,7 @@ test("using lambda syntactic sugar (Node)", async (t) => {
   input.wire("list->", map);
   map.wire("list->", board.output());
   const outputs = await board.runOnce({ list: [1, 2, 3] });
-  t.deepEqual(outputs, {
+  t.like(outputs, {
     list: [
       { index: 0, item: 1, list: [1, 2, 3] },
       { index: 1, item: 2, list: [1, 2, 3] },

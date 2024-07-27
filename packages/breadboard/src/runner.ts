@@ -22,6 +22,7 @@ import type {
   LambdaNodeInputs,
   LambdaNodeOutputs,
   RunArguments,
+  NodeValue,
 } from "./types.js";
 
 import { TraversalMachine } from "./traversal/machine.js";
@@ -49,6 +50,7 @@ import {
   resolveBoardCapabilities,
   resolveBoardCapabilitiesInInputs,
 } from "./capability.js";
+import { inspect } from "./inspector/index.js";
 
 /**
  * This class is the main entry point for running a board.
@@ -289,19 +291,35 @@ export class BoardRunner implements BreadboardRunner {
    *
    * This is useful for running boards that don't have multiple outputs
    * or the the outputs are only expected to be visited once.
-   *
-   * @param inputs - the input values to provide to the board.
-   * @param probe - an optional probe. If provided, the board will dispatch
-   * events to it. See [Chapter 7: Probes](https://github.com/breadboard-ai/breadboard/tree/main/packages/breadboard/docs/tutorial#chapter-7-probes) of the Breadboard tutorial for more information.
-   * @param slots - an optional map of slotted graphs. See [Chapter 6: Boards with slots](https://github.com/breadboard-ai/breadboard/tree/main/packages/breadboard/docs/tutorial#chapter-6-boards-with-slots) of the Breadboard tutorial for more information.
-   * @param kits - an optional map of kits to use when running the board.
-   * @returns - outputs provided by the board.
    */
   async runOnce(
     inputs: InputValues,
     context: NodeHandlerContext = {}
   ): Promise<OutputValues> {
-    const args = { ...inputs, ...this.args };
+    const args = {
+      get ["-wires"]() {
+        if (!context?.board) return {};
+        const inspectableGraph = inspect(context?.board);
+        const id = context?.descriptor?.id;
+        if (!id) return {};
+        const inspectableNode = inspectableGraph.nodeById(id);
+        if (!inspectableNode) return {};
+        return {
+          incoming: inspectableNode.incoming().map((edge) => ({
+            in: edge.in,
+            out: edge.out,
+            type: edge.type,
+          })),
+          outgoing: inspectableNode.outgoing().map((edge) => ({
+            in: edge.in,
+            out: edge.out,
+            type: edge.type,
+          })),
+        } as unknown as NodeValue;
+      },
+      ...inputs,
+      ...this.args,
+    };
     const { probe } = context;
 
     if (context.board && context.descriptor) {

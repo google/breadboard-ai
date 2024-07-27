@@ -135,10 +135,13 @@ export const TestKit = new KitBuilder({
    */
   reverser: {
     invoke: async (inputs) => {
+      const stringEntries = Object.entries(inputs).filter(
+        ([, value]) => typeof value === "string"
+      );
       return Object.fromEntries(
-        Object.entries(inputs).map(([key, value]) => [
+        stringEntries.map(([key, value]) => [
           key,
-          (inputs[key] = [...(value as string)].reverse().join("")),
+          [...(value as string)].reverse().join(""),
         ])
       );
     },
@@ -220,10 +223,13 @@ export const MirrorUniverseKit = new KitBuilder({
    * @param inputs InputValues
    */
   reverser: async (inputs) => {
+    const stringEntries = Object.entries(inputs).filter(
+      ([, value]) => typeof value === "string"
+    );
     return Object.fromEntries(
-      Object.entries(inputs).map(([key, value]) => [
+      stringEntries.map(([key, value]) => [
         key,
-        (inputs[key] = [...(value as string)].sort().join("")),
+        [...(value as string)].sort().join(""),
       ])
     );
   },

@@ -40,6 +40,7 @@ const removeHardPort = (...names: string[]) => {
 };
 
 const removeWiredPort = (port: InspectablePort) => {
+  if (port.name === "-wires") return false;
   return (
     (port.status === PortStatus.Connected ||
       port.status === PortStatus.Dangling) &&
@@ -74,7 +75,7 @@ export const filterPortsByMode = (
 
   const inputs: InspectablePortList = {
     fixed: ports.inputs.fixed,
-    ports: ports.inputs.ports.filter(removeHardPort()),
+    ports: ports.inputs.ports.filter(removeHardPort("-wires")),
   };
 
   const outputs: InspectablePortList = {

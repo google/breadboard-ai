@@ -82,6 +82,42 @@
           "in": "context"
         },
         {
+          "from": "input-1",
+          "to": "fn-3",
+          "out": "context",
+          "in": "context"
+        },
+        {
+          "from": "input-1",
+          "to": "fn-5",
+          "out": "-wires",
+          "in": "wires"
+        },
+        {
+          "from": "input-1",
+          "to": "createSchema",
+          "out": "title",
+          "in": "title"
+        },
+        {
+          "from": "input-1",
+          "to": "createSchema",
+          "out": "description",
+          "in": "description"
+        },
+        {
+          "from": "input-1",
+          "to": "fn-6",
+          "out": "title",
+          "in": "title"
+        },
+        {
+          "from": "input-1",
+          "to": "fn-6",
+          "out": "description",
+          "in": "description"
+        },
+        {
           "from": "fn-6",
           "to": "input-7",
           "out": "schema",
@@ -98,36 +134,6 @@
           "to": "output-9",
           "out": "context",
           "in": "context"
-        },
-        {
-          "from": "input-1",
-          "to": "fn-3",
-          "out": "context",
-          "in": "context"
-        },
-        {
-          "from": "input-1",
-          "to": "createSchema",
-          "out": "title",
-          "in": "title"
-        },
-        {
-          "from": "input-1",
-          "to": "createSchema",
-          "out": "description",
-          "in": "description"
-        },
-        {
-          "from": "input-1",
-          "to": "fn-6",
-          "out": "title",
-          "in": "title"
-        },
-        {
-          "from": "input-1",
-          "to": "fn-6",
-          "out": "description",
-          "in": "description"
         },
         {
           "from": "input-7",
@@ -207,7 +213,7 @@
           "id": "fn-5",
           "type": "runJavascript",
           "configuration": {
-            "code": "const fn_5 = ({context})=>{console.log(\"\\u{1F33B} context\",context);if(!context){return{input:[]}}const c=asContextArray(context);const mode=computeMode(c);if(mode===\"input\"){return{input:c}}else if(mode===\"inputOutput\"){return{input:c,output:c}}return{output:onlyChoices(c),choose:c};function asContextArray(context2){const input=context2;return Array.isArray(input)?input:[input]}__name(asContextArray,\"asContextArray\");function onlyChoices(context2){const choices=[];const reversed=[...context2].reverse();for(const item of reversed){choices.push(item);if(item.role===\"$metadata\"&&item.type===\"split\"&&item.data.type===\"start\"){break}}return choices.reverse()}__name(onlyChoices,\"onlyChoices\");function computeMode(context2){const lastItem=context2[context2.length-1];if(!lastItem){return\"input\"}if(lastItem.role===\"user\"){return\"input\"}if(lastItem.role!==\"$metadata\"){return\"inputOutput\"}if(lastItem.type===\"split\"&&lastItem.data.type===\"end\"){const splitId=lastItem.data.id;let choiceCounter=1;for(let i=context2.length-2;i>=0;i--){const item=context2[i];if(item.role===\"$metadata\"&&item.type===\"split\"){const{id,type}=item.data;if(splitId!==id){return\"inputOutput\"}if(type===\"start\"){break}choiceCounter++}}if(choiceCounter>1){return\"choose\"}}return\"inputOutput\"}__name(computeMode,\"computeMode\")};",
+            "code": "const fn_5 = ({context,wires})=>{if(!context){return{input:[]}}const c=asContextArray(context);const w=wires;if(w?.outgoing?.length===0){return{output:c}}const mode=computeMode(c);if(mode===\"input\"){return{input:c}}else if(mode===\"inputOutput\"){return{input:c,output:c}}return{output:onlyChoices(c),choose:c};function asContextArray(context2){const input=context2;return Array.isArray(input)?input:[input]}__name(asContextArray,\"asContextArray\");function onlyChoices(context2){const choices=[];const reversed=[...context2].reverse();for(const item of reversed){choices.push(item);if(item.role===\"$metadata\"&&item.type===\"split\"&&item.data.type===\"start\"){break}}return choices.reverse()}__name(onlyChoices,\"onlyChoices\");function computeMode(context2){const lastItem=context2[context2.length-1];if(!lastItem){return\"input\"}if(lastItem.role===\"user\"){return\"input\"}if(lastItem.role!==\"$metadata\"){return\"inputOutput\"}if(lastItem.type===\"split\"&&lastItem.data.type===\"end\"){const splitId=lastItem.data.id;let choiceCounter=1;for(let i=context2.length-2;i>=0;i--){const item=context2[i];if(item.role===\"$metadata\"&&item.type===\"split\"){const{id,type}=item.data;if(splitId!==id){return\"inputOutput\"}if(type===\"start\"){break}choiceCounter++}}if(choiceCounter>1){return\"choose\"}}return\"inputOutput\"}__name(computeMode,\"computeMode\")};",
             "name": "fn_5",
             "raw": true
           },
@@ -240,6 +246,56 @@
           "metadata": {
             "title": "Done Check",
             "description": "Checking to see if we can skip work altogether"
+          }
+        },
+        {
+          "id": "input-1",
+          "type": "input",
+          "configuration": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "context": {
+                  "title": "Context in",
+                  "description": "Incoming conversation context",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "behavior": [
+                      "llm-content"
+                    ]
+                  },
+                  "examples": [
+                    "[{\"parts\":[{\"text\":\"{\\\"adCampaign\\\":{\\\"headlines\\\":[\\\"Breadboard: AI Playground\\\",\\\"Exp. AI Patterns\\\",\\\"Rapid Prototyping\\\",\\\"AI Power, Gemini\\\",\\\"Integrate AI Seamlessly\\\",\\\"Create Graphs, Prompts\\\",\\\"Accessible AI\\\",\\\"Breadboard: Dev's AI Kit\\\",\\\"Supercharge Dev, Breadboard\\\",\\\"Accelerate Innovation\\\",\\\"Revolutionize Dev, AI\\\",\\\"Breadboard: AI, Ingenuity\\\",\\\"Elevate Projects, Breadboard\\\",\\\"Unlock AI Power, Breadboard\\\"],\\\"descriptions\\\":[\\\"Breadboard: Play, experiment, prototype with AI. Integrate AI with Gemini.\\\",\\\"Stunning graphs with prompts. Accessible AI for devs.\\\",\\\"Accelerate innovation with Breadboard. Experiment with AI risk-free.\\\",\\\"Elevate projects with Breadboard AI. Integrate AI seamlessly.\\\"]},\\\"voteRequest\\\":\\\"Does this ad campaign seem ok to you?\\\"}\"}],\"role\":\"model\"}]"
+                  ],
+                  "default": "[]"
+                },
+                "-wires": {
+                  "title": "Wires",
+                  "type": "object",
+                  "default": "{}"
+                },
+                "title": {
+                  "title": "Title",
+                  "description": "The user label",
+                  "behavior": [
+                    "config"
+                  ],
+                  "default": "User",
+                  "type": "string"
+                },
+                "description": {
+                  "title": "Description",
+                  "description": "The user's input",
+                  "behavior": [
+                    "config"
+                  ],
+                  "default": "A request or response",
+                  "type": "string"
+                }
+              },
+              "required": []
+            }
           }
         },
         {
@@ -292,51 +348,6 @@
           "metadata": {
             "title": "Output",
             "description": "Displaying the output the user."
-          }
-        },
-        {
-          "id": "input-1",
-          "type": "input",
-          "configuration": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "context": {
-                  "title": "Context in",
-                  "description": "Incoming conversation context",
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "behavior": [
-                      "llm-content"
-                    ]
-                  },
-                  "examples": [
-                    "[{\"parts\":[{\"text\":\"{\\\"adCampaign\\\":{\\\"headlines\\\":[\\\"Breadboard: AI Playground\\\",\\\"Exp. AI Patterns\\\",\\\"Rapid Prototyping\\\",\\\"AI Power, Gemini\\\",\\\"Integrate AI Seamlessly\\\",\\\"Create Graphs, Prompts\\\",\\\"Accessible AI\\\",\\\"Breadboard: Dev's AI Kit\\\",\\\"Supercharge Dev, Breadboard\\\",\\\"Accelerate Innovation\\\",\\\"Revolutionize Dev, AI\\\",\\\"Breadboard: AI, Ingenuity\\\",\\\"Elevate Projects, Breadboard\\\",\\\"Unlock AI Power, Breadboard\\\"],\\\"descriptions\\\":[\\\"Breadboard: Play, experiment, prototype with AI. Integrate AI with Gemini.\\\",\\\"Stunning graphs with prompts. Accessible AI for devs.\\\",\\\"Accelerate innovation with Breadboard. Experiment with AI risk-free.\\\",\\\"Elevate projects with Breadboard AI. Integrate AI seamlessly.\\\"]},\\\"voteRequest\\\":\\\"Does this ad campaign seem ok to you?\\\"}\"}],\"role\":\"model\"}]"
-                  ],
-                  "default": "[]"
-                },
-                "title": {
-                  "title": "Title",
-                  "description": "The user label",
-                  "behavior": [
-                    "config"
-                  ],
-                  "default": "User",
-                  "type": "string"
-                },
-                "description": {
-                  "title": "Description",
-                  "description": "The user's input",
-                  "behavior": [
-                    "config"
-                  ],
-                  "default": "A request or response",
-                  "type": "string"
-                }
-              },
-              "required": []
-            }
           }
         },
         {

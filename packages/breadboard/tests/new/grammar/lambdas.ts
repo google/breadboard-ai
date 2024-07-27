@@ -39,7 +39,7 @@ test("simplest lambda", async (t) => {
   });
 
   const result = await serializeAndRunGraph(graph, { foo: "bar" });
-  t.deepEqual(result, { foo: "bar" });
+  t.like(result, { foo: "bar" });
 });
 
 test("simplest lambda, direct call, no invoke()", async (t) => {
@@ -53,7 +53,7 @@ test("simplest lambda, direct call, no invoke()", async (t) => {
   });
 
   const result = await serializeAndRunGraph(graph, { foo: "bar" });
-  t.deepEqual(result, { foo: "bar" });
+  t.like(result, { foo: "bar" });
 });
 
 test("simplest closure lambda, using to()", async (t) => {
@@ -67,7 +67,7 @@ test("simplest closure lambda, using to()", async (t) => {
   });
 
   const result = await serializeAndRunGraph(graph, { foo: "bar", bar: "baz" });
-  t.deepEqual(result, { foo: "bar", bar: "baz" });
+  t.like(result, { foo: "bar", bar: "baz" });
 });
 
 test("simplest closure lambda, using in()", async (t) => {
@@ -81,7 +81,7 @@ test("simplest closure lambda, using in()", async (t) => {
   });
 
   const result = await serializeAndRunGraph(graph, { foo: "bar", bar: "baz" });
-  t.deepEqual(result, { foo: "bar", bar: "baz" });
+  t.like(result, { foo: "bar", bar: "baz" });
 });
 
 test("serialize simple lambda", async (t) => {

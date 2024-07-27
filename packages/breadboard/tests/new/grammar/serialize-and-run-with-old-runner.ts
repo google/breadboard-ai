@@ -30,7 +30,7 @@ test("simplest graph", async (t) => {
     return testKit.noop(inputs);
   });
   const result = await serializeAndRunGraph(graph, { foo: "bar" });
-  t.deepEqual(result, { foo: "bar" });
+  t.like(result, { foo: "bar" });
 });
 
 test("simplest graph, spread", async (t) => {
@@ -38,7 +38,7 @@ test("simplest graph, spread", async (t) => {
     return testKit.noop({ ...inputs });
   });
   const result = await serializeAndRunGraph(graph, { foo: "bar" });
-  t.deepEqual(result, { foo: "bar" });
+  t.like(result, { foo: "bar" });
 });
 
 test("simplest graph, pick input", async (t) => {

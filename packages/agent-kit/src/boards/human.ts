@@ -103,10 +103,21 @@ const inputSchemaBuilder = code<SchemaInputs, SchemaOutputs>(
 
 export type ModeRouterIn = {
   context: unknown;
+  wires: unknown;
 };
+
+export type Wires =
+  | {
+      outgoing: string[];
+    }
+  | undefined;
+
 export type ModeRouterOut =
   | {
       input: Context[];
+    }
+  | {
+      output: Context[];
     }
   | {
       input: Context[];
@@ -136,15 +147,19 @@ export type HumanMode = "input" | "inputOutput" | "choose" | "chooseReject";
  * Strategies for each mode, a different output:
  * - "input" -- just the context.
  * - "inputOutput" -- just the context.
+ * - "output" -- just the context.
  * - "choose" -- the context and the `ChoicePicker` data structure.
  */
 export const modeRouterFunction = fun<ModeRouterIn, ModeRouterOut>(
-  ({ context }) => {
-    console.log("🌻 context", context);
+  ({ context, wires }) => {
     if (!context) {
       return { input: [] };
     }
     const c = asContextArray(context);
+    const w = wires as Wires;
+    if (w?.outgoing?.length === 0) {
+      return { output: c };
+    }
     const mode = computeMode(c);
     if (mode === "input") {
       return { input: c };
@@ -282,156 +297,160 @@ export const choicePickerFunction = fun(({ context, choice, total }) => {
 });
 export const choicePicker = code(choicePickerFunction);
 
-export default await board(({ context, title, description }) => {
-  context
-    .title("Context in")
-    .description("Incoming conversation context")
-    .isArray()
-    .behavior("llm-content")
-    .optional()
-    .examples(
-      JSON.stringify([
-        {
-          parts: [{ text: JSON.stringify(voteRequestContent) }],
-          role: "model",
-        },
-      ])
-    )
-    .default("[]");
-  title
-    .title("Title")
-    .description("The user label")
-    .optional()
-    .behavior("config")
-    .default("User");
-  description
-    .title("Description")
-    .description("The user's input")
-    .optional()
-    .behavior("config")
-    .default("A request or response");
-
-  const areWeDoneChecker = skipIfDone({
-    $metadata: {
-      title: "Done Check",
-      description: "Checking to see if we can skip work altogether",
-    },
-    context,
-  });
-
-  base.output({
-    $metadata: { title: "Done", description: "Skipping because we're done" },
-    context: areWeDoneChecker.done.title("Context out"),
-  });
-
-  const routeByMode = modeRouter({
-    $metadata: {
-      title: "Compute Mode",
-      description: "Determining the mode of operation",
-    },
-    context: areWeDoneChecker.context,
-  });
-
-  const createSchema = inputSchemaBuilder({
-    $id: "createSchema",
-    $metadata: {
-      title: "Create Schema",
-      description: "Creating a schema for user input",
-    },
-    title: title.isString(),
-    description: description.isString(),
-    context: routeByMode.input,
-  });
-
-  const buildChooseSchema = chooseSchemaBuilder({
-    $metadata: {
-      title: "Choose Options",
-      description: "Creating the options to choose from",
-    },
-    title: title.isString(),
-    description: description.isString(),
-    context: routeByMode.choose,
-  });
-
-  const chooseInput = base.input({
-    $metadata: {
-      title: "Look at the choices above and pick one",
-      description: "Asking user to choose an option",
-    },
-  });
-
-  buildChooseSchema.schema.to(chooseInput);
-
-  const pickChoice = choicePicker({
-    $metadata: {
-      title: "Read Choice",
-      description: "Reading the user's choice",
-    },
-    context: routeByMode.choose,
-    choice: chooseInput.choice,
-    total: buildChooseSchema.total,
-  });
-
-  base.output({
-    $metadata: {
-      title: "Choice Output",
-      description: "Outputting the user's choice",
-    },
-    context: pickChoice.context
+export default await board(
+  ({ context, title, description, ["-wires"]: wires }) => {
+    wires.title("Wires").isObject().optional().default("{}");
+    context
+      .title("Context in")
+      .description("Incoming conversation context")
       .isArray()
       .behavior("llm-content")
-      .title("Context out"),
-  });
+      .optional()
+      .examples(
+        JSON.stringify([
+          {
+            parts: [{ text: JSON.stringify(voteRequestContent) }],
+            role: "model",
+          },
+        ])
+      )
+      .default("[]");
+    title
+      .title("Title")
+      .description("The user label")
+      .optional()
+      .behavior("config")
+      .default("User");
+    description
+      .title("Description")
+      .description("The user's input")
+      .optional()
+      .behavior("config")
+      .default("A request or response");
 
-  base.output({
-    $id: "output",
-    $metadata: {
-      title: "Output",
-      description: "Displaying the output the user.",
-    },
-    output: routeByMode.output,
-    schema: {
-      type: "object",
-      behavior: ["bubble"],
-      properties: {
-        output: {
-          type: "object",
-          behavior: ["llm-content"],
-          title: "Output",
-          description: "The output to display",
-        },
+    const areWeDoneChecker = skipIfDone({
+      $metadata: {
+        title: "Done Check",
+        description: "Checking to see if we can skip work altogether",
       },
-    } satisfies Schema,
-  });
+      context,
+    });
 
-  const input = base.input({
-    $id: "input",
-    $metadata: {
-      title: "Input",
-      description: "Asking user for input",
-    },
-  });
+    base.output({
+      $metadata: { title: "Done", description: "Skipping because we're done" },
+      context: areWeDoneChecker.done.title("Context out"),
+    });
 
-  createSchema.schema.to(input);
+    const routeByMode = modeRouter({
+      $metadata: {
+        title: "Compute Mode",
+        description: "Determining the mode of operation",
+      },
+      context: areWeDoneChecker.context,
+      wires,
+    });
 
-  const appendContext = userPartsAdder({
-    $id: "appendContext",
-    $metadata: {
-      title: "Append Context",
-      description: "Appending user input to the conversation context",
-    },
-    context: routeByMode.input,
-    toAdd: input.text,
-  });
+    const createSchema = inputSchemaBuilder({
+      $id: "createSchema",
+      $metadata: {
+        title: "Create Schema",
+        description: "Creating a schema for user input",
+      },
+      title: title.isString(),
+      description: description.isString(),
+      context: routeByMode.input,
+    });
 
-  return {
-    context: appendContext.context
-      .isArray()
-      .behavior("llm-content")
-      .title("Context out"),
-    text: input.text.title("Text").behavior("deprecated"),
-  };
-}).serialize({
+    const buildChooseSchema = chooseSchemaBuilder({
+      $metadata: {
+        title: "Choose Options",
+        description: "Creating the options to choose from",
+      },
+      title: title.isString(),
+      description: description.isString(),
+      context: routeByMode.choose,
+    });
+
+    const chooseInput = base.input({
+      $metadata: {
+        title: "Look at the choices above and pick one",
+        description: "Asking user to choose an option",
+      },
+    });
+
+    buildChooseSchema.schema.to(chooseInput);
+
+    const pickChoice = choicePicker({
+      $metadata: {
+        title: "Read Choice",
+        description: "Reading the user's choice",
+      },
+      context: routeByMode.choose,
+      choice: chooseInput.choice,
+      total: buildChooseSchema.total,
+    });
+
+    base.output({
+      $metadata: {
+        title: "Choice Output",
+        description: "Outputting the user's choice",
+      },
+      context: pickChoice.context
+        .isArray()
+        .behavior("llm-content")
+        .title("Context out"),
+    });
+
+    base.output({
+      $id: "output",
+      $metadata: {
+        title: "Output",
+        description: "Displaying the output the user.",
+      },
+      output: routeByMode.output,
+      schema: {
+        type: "object",
+        behavior: ["bubble"],
+        properties: {
+          output: {
+            type: "object",
+            behavior: ["llm-content"],
+            title: "Output",
+            description: "The output to display",
+          },
+        },
+      } satisfies Schema,
+    });
+
+    const input = base.input({
+      $id: "input",
+      $metadata: {
+        title: "Input",
+        description: "Asking user for input",
+      },
+    });
+
+    createSchema.schema.to(input);
+
+    const appendContext = userPartsAdder({
+      $id: "appendContext",
+      $metadata: {
+        title: "Append Context",
+        description: "Appending user input to the conversation context",
+      },
+      context: routeByMode.input,
+      toAdd: input.text,
+    });
+
+    return {
+      context: appendContext.context
+        .isArray()
+        .behavior("llm-content")
+        .title("Context out"),
+      text: input.text.title("Text").behavior("deprecated"),
+    };
+  }
+).serialize({
   title: "Human",
   metadata: {
     icon: "human",
