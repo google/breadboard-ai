@@ -1,0 +1,82 @@
+{
+  "title": "Open Alex API Query",
+  "description": "Query the Open Alex API",
+  "version": "0.0.1",
+  "edges": [
+    {
+      "from": "fetch",
+      "to": "output-0",
+      "out": "response",
+      "in": "result"
+    },
+    {
+      "from": "input-0",
+      "to": "urlTemplate",
+      "out": "requestUri",
+      "in": "requestUri"
+    },
+    {
+      "from": "urlTemplate",
+      "to": "fetch",
+      "out": "url",
+      "in": "url"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "input-0",
+      "type": "input",
+      "configuration": {
+        "schema": {
+          "type": "object",
+          "properties": {
+            "requestUri": {
+              "type": "string",
+              "title": "Request URI",
+              "default": "works/random"
+            }
+          },
+          "required": []
+        }
+      }
+    },
+    {
+      "id": "output-0",
+      "type": "output",
+      "configuration": {
+        "schema": {
+          "type": "object",
+          "properties": {
+            "result": {
+              "type": [
+                "array",
+                "boolean",
+                "null",
+                "number",
+                "object",
+                "string"
+              ]
+            }
+          },
+          "required": [
+            "result"
+          ]
+        }
+      }
+    },
+    {
+      "id": "fetch",
+      "type": "fetch",
+      "configuration": {
+        "method": "GET"
+      }
+    },
+    {
+      "id": "urlTemplate",
+      "type": "urlTemplate",
+      "configuration": {
+        "template": "https://api.openalex.org/{requestUri}"
+      }
+    }
+  ]
+}
