@@ -23,7 +23,8 @@
     "dev": "npm run dev:nowatch --watch",
     "dev:nowatch": "wireit",
     "test": "wireit",
-    "test:integration": "wireit"
+    "test:integration": "wireit",
+    "migrate": "docker run --rm -v \"$(pwd):/flyway/sql\" -v \"$(pwd)/src/migrations:/flyway/sql/migrations\" flyway/flyway -url=jdbc:sqlite:/flyway/sql/board-server.db -locations=filesystem:/flyway/sql/migrations migrate"
   },
   "wireit": {
     "build": {

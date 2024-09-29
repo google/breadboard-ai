@@ -1,5 +1,15 @@
 # Breadboard Board Server Reference Implementation
 
+## Getting started
+
+To run the board server locally with SQLite backend:
+```
+export GOOGLE_APPLICATION_CREDENTIALS=n/a
+export STORAGE_BACKEND=sqlite
+npm run migrate
+npm run dev
+```
+
 ## Running tests
 
 To run the tests:
@@ -19,6 +29,14 @@ To run locally with `sqlite`:
 export GOOGLE_APPLICATION_CREDENTIALS=n/a
 export STORAGE_BACKEND=sqlite
 export SQLITE_DB_PATH=/path/to/board-server.db
+```
+
+## Initialize the database for local SQLite development
+
+In `sqlite` mode, the board server uses Flyway for database migrations. To initialize the database using docker, run the following command:
+
+```
+npm run migrate
 ```
 
 ## Building with docker
@@ -56,7 +74,7 @@ docker build --platform linux/amd64 ...
 To run the container:
 
 ```
-docker run -d -p 3000:3000 --name board-server board-server
+docker run -d -p 3000:3000 --name board-server board-server:sqlite
 docker exec -it board-server /bin/bash
 # npm run add <username> # add a user and copy your API key
 ```
