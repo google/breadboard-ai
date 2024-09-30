@@ -1,0 +1,138 @@
+{
+  "$schema": "https://raw.githubusercontent.com/OpenAPITools/openapi-generator-cli/master/apps/generator-cli/src/config.schema.json",
+  "generator-cli": {
+    "generators": {
+      "/clients/java": {
+        "generatorName": "java",
+        "inputSpec": "openapi.yaml",
+        "output": "./generated/clients/java"
+      },
+      "/clients/kotlin": {
+        "generatorName": "kotlin",
+        "inputSpec": "openapi.yaml",
+        "output": "./generated/clients/kotlin"
+      },
+      "/clients/typescript": {
+        "additionalProperties": {
+          "npmName": "board-server-client",
+          "supportsES6": "true",
+          "withInterfaces": true
+        },
+        "generatorName": "typescript",
+        "inputSpec": "openapi.yaml",
+        "output": "./generated/clients/typescript/typescript"
+      },
+      "/clients/typescript-angular": {
+        "generatorName": "typescript-angular",
+        "inputSpec": "openapi.yaml",
+        "output": "./generated/clients/typescript/angular"
+      },
+      "/clients/typescript-aurelia": {
+        "generatorName": "typescript-aurelia",
+        "inputSpec": "openapi.yaml",
+        "output": "./generated/clients/typescript/aurelia"
+      },
+      "/clients/typescript-axios": {
+        "generatorName": "typescript-axios",
+        "inputSpec": "openapi.yaml",
+        "output": "./generated/clients/typescript/axios"
+      },
+      "/clients/typescript-fetch": {
+        "additionalProperties": {
+          "npmName": "board-server-client",
+          "supportsES6": true,
+          "withInterfaces": true
+        },
+        "generatorName": "typescript-fetch",
+        "inputSpec": "openapi.yaml",
+        "output": "./generated/clients/typescript/fetch"
+      },
+      "/clients/typescript-inversify": {
+        "generatorName": "typescript-inversify",
+        "inputSpec": "openapi.yaml",
+        "output": "./generated/clients/typescript/inversify"
+      },
+      "/clients/typescript-jquery": {
+        "generatorName": "typescript-jquery",
+        "inputSpec": "openapi.yaml",
+        "output": "./generated/clients/typescript/jquery"
+      },
+      "/clients/typescript-nestjs": {
+        "generatorName": "typescript-nestjs",
+        "inputSpec": "openapi.yaml",
+        "output": "./generated/clients/typescript/nestjs"
+      },
+      "/clients/typescript-node": {
+        "additionalProperties": {
+          "npmName": "board-server-client",
+          "supportsES6": true,
+          "withInterfaces": true
+        },
+        "generatorName": "typescript-node",
+        "inputSpec": "openapi.yaml",
+        "output": "./generated/clients/typescript/node"
+      },
+      "/clients/typescript-redux-query": {
+        "generatorName": "typescript-redux-query",
+        "inputSpec": "openapi.yaml",
+        "output": "./generated/clients/typescript/redux-query"
+      },
+      "/clients/typescript-rxjs": {
+        "additionalProperties": {
+          "npmName": "board-server-client",
+          "supportsES6": true,
+          "withInterfaces": true
+        },
+        "generatorName": "typescript-rxjs",
+        "inputSpec": "openapi.yaml",
+        "output": "./generated/clients/typescript/rxjs"
+      },
+      "/documentation/markdown": {
+        "generatorName": "markdown",
+        "inputSpec": "openapi.yaml",
+        "output": "./generated/documentation/markdown"
+      },
+      "/documentation/openapi-json": {
+        "generatorName": "openapi",
+        "inputSpec": "openapi.yaml",
+        "output": "./generated/documentation/openapi-json"
+      },
+      "/documentation/openapi-yaml": {
+        "generatorName": "openapi-yaml",
+        "inputSpec": "openapi.yaml",
+        "output": "./generated/documentation/openapi-yaml"
+      },
+      "/schemas/postman-collection": {
+        "generatorName": "postman-collection",
+        "inputSpec": "openapi.yaml",
+        "output": "./generated/schemas/postman-collection"
+      },
+      "/schemas/protobuf": {
+        "generatorName": "protobuf-schema",
+        "inputSpec": "openapi.yaml",
+        "output": "./generated/schemas/protobuf"
+      },
+      "/schemas/wsdl-schema": {
+        "generatorName": "wsdl-schema",
+        "inputSpec": "openapi.yaml",
+        "output": "./generated/schemas/wsdl-schema"
+      },
+      "/servers/kotlin-server": {
+        "generatorName": "kotlin-server",
+        "inputSpec": "openapi.yaml",
+        "output": "./generated/server/kotlin-server"
+      },
+      "/servers/kotlin-spring": {
+        "generatorName": "kotlin-spring",
+        "inputSpec": "openapi.yaml",
+        "output": "./generated/server/kotlin-spring"
+      },
+      "/servers/nodejs-express-server": {
+        "generatorName": "nodejs-express-server",
+        "inputSpec": "openapi.yaml",
+        "output": "./generated/server/nodejs-express-server"
+      }
+    },
+    "version": "7.8.0"
+  }
+}

@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 env:
   REGISTRY: ghcr.io
@@ -107,7 +110,7 @@ jobs:
             type=gha,ref=${{ needs.setup.outputs.board_server_sqlite_image_name }}
             type=registry,ref=${{ needs.setup.outputs.board_server_sqlite_image_path }}
           cache-to: type=gha,mode=max,ref=${{ needs.setup.outputs.board_server_sqlite_image_name }}
-          push: true
+          push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && !github.event.pull_request.head.repo.fork }}
           provenance: true
           tags: >
             ${{ needs.setup.outputs.board_server_sqlite_image_path }}:${{ github.sha }},
@@ -125,7 +128,7 @@ jobs:
         with:
           subject-name: ${{ needs.setup.outputs.board_server_sqlite_image_path }}
           subject-digest: ${{ steps.push.outputs.digest }}
-          push-to-registry: true
+          push-to-registry: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && !github.event.pull_request.head.repo.fork }}
 
   board-server-firestore-image:
     name: Build board server firestore image

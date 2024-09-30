@@ -3,224 +3,248 @@ info:
   title: Board Server API
   version: 1.0.0
   description: API for managing and interacting with boards
-
+  license:
+    name: Apache 2.0
+    identifier: Apache-2.0
 servers:
-  - url: http://localhost:3000
-
+  - url: https://breadboard.live
+  - variables:
+      host:
+        enum:
+          - localhost:3000
+          - breadboard.live
+        default: breadboard.live
+    url: https://{host}
+security:
+  - ApiKeyAuth: []
 paths:
   /boards:
     get:
       summary: List boards
-      operationId: boardserver.boards.list
-      security: []
+      operationId: boardserver_boards_list
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
-            application/json:    
+            application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/BoardListEntry'
-
+                  $ref: "#/components/schemas/BoardListEntry"
+        "4xx":
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
   /boards/@{account}/{boardName}.json:
+    parameters:
+      - $ref: "#/components/parameters/AccountParam"
+      - $ref: "#/components/parameters/BoardNameParam"
     get:
       summary: Get a board
-      operationId: boardserver.boards.get
-      security: []
-      parameters:
-        - $ref: '#/components/parameters/AccountParam'
-        - $ref: '#/components/parameters/BoardNameParam'
+      operationId: boardserver_boards_get
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Board'
-    
+                $ref: "#/components/schemas/Board"
+        "4xx":
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
     post:
       summary: Create or update a board
-      operationId: boardserver.boards.post
-      security: []
-      parameters:
-        - $ref: '#/components/parameters/AccountParam'
-        - $ref: '#/components/parameters/BoardNameParam'
-        - $ref: '#/components/parameters/ApiKeyQuery'
+      operationId: boardserver_boards_post
+      security:
+        - ApiKeyAuth: []
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Board'
+              $ref: "#/components/schemas/Board"
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  created:
-                    type: string
-
+                $ref: "#/components/schemas/BoardCreationResponse"
+        "4xx":
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
   /boards/@{account}/{boardName}.app:
+    parameters:
+      - $ref: "#/components/parameters/AccountParam"
+      - $ref: "#/components/parameters/BoardNameParam"
     get:
       summary: Serve frontend app
-      operationId: boardserver.boards.serve
-      security: []
-      parameters:
-        - $ref: '#/components/parameters/AccountParam'
-        - $ref: '#/components/parameters/BoardNameParam'
+      operationId: boardserver_boards_serve
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             text/html:
               schema:
                 type: string
-
+        "4xx":
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
   /boards/@{account}/{boardName}.api:
+    parameters:
+      - $ref: "#/components/parameters/AccountParam"
+      - $ref: "#/components/parameters/BoardNameParam"
     get:
       summary: Serve API explorer
-      operationId: boardserver.boards.api.get
-      security: []
-      parameters:
-        - $ref: '#/components/parameters/AccountParam'
-        - $ref: '#/components/parameters/BoardNameParam'
+      operationId: boardserver_boards_api_get
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             text/html:
               schema:
                 type: string
-
+        "4xx":
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
   /boards/@{account}/{boardName}.api/invoke:
+    parameters:
+      - $ref: "#/components/parameters/AccountParam"
+      - $ref: "#/components/parameters/BoardNameParam"
     post:
       summary: Invoke API
-      operationId: boardserver.boards.api.invoke
-      security: []
-      parameters:
-        - $ref: '#/components/parameters/AccountParam'
-        - $ref: '#/components/parameters/BoardNameParam'
+      operationId: boardserver_boards_api_invoke
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                $key:
-                  type: string
+              $ref: "#/components/schemas/ApiInvokeRequest"
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/json:
               schema:
                 type: object
-
+        "4xx":
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
   /boards/@{account}/{boardName}.api/describe:
-    post:
+    parameters:
+      - $ref: "#/components/parameters/AccountParam"
+      - $ref: "#/components/parameters/BoardNameParam"
+    get:
       summary: Get API description
-      operationId: boardserver.boards.api.describe
-      security: []
-      parameters:
-        - $ref: '#/components/parameters/AccountParam'
-        - $ref: '#/components/parameters/BoardNameParam'
+      operationId: boardserver_boards_api_describe
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiDescription'
-
+                $ref: "#/components/schemas/ApiDescription"
+        "4xx":
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
   /boards/@{account}/{boardName}.api/run:
+    parameters:
+      - $ref: "#/components/parameters/AccountParam"
+      - $ref: "#/components/parameters/BoardNameParam"
     post:
       summary: Execute the board
-      operationId: boardserver.boards.api.run
-      security: []
-      parameters:
-        - $ref: '#/components/parameters/AccountParam'
-        - $ref: '#/components/parameters/BoardNameParam'
+      operationId: boardserver_boards_api_run
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                $key:
-                  type: string
+              $ref: "#/components/schemas/ApiInvokeRequest"
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             text/event-stream:
               schema:
                 type: string
-
+        "4xx":
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
   /boards/@{account}/{boardName}.invite:
+    parameters:
+      - $ref: "#/components/parameters/AccountParam"
+      - $ref: "#/components/parameters/BoardNameParam"
     get:
       summary: List invites
-      operationId: boardserver.boards.invite
-      security: []
-      parameters:
-        - $ref: '#/components/parameters/AccountParam'
-        - $ref: '#/components/parameters/BoardNameParam'
-        - $ref: '#/components/parameters/ApiKeyQuery'
+      operationId: boardserver_boards_invite
+      security:
+        - ApiKeyAuth: []
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  invites:
-                    type: array
-                    items:
-                      type: string
-
+                $ref: "#/components/schemas/InviteListResponse"
+        "4xx":
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
     post:
       summary: Create or delete an invite
-      operationId: boardserver.boards.invites.post
-      security: []
-      parameters:
-        - $ref: '#/components/parameters/AccountParam'
-        - $ref: '#/components/parameters/BoardNameParam'
-        - $ref: '#/components/parameters/ApiKeyQuery'
+      operationId: boardserver_boards_invites_post
+      security:
+        - ApiKeyAuth: []
       requestBody:
+        required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                delete:
-                  type: string
+              $ref: "#/components/schemas/InviteRequest"
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/json:
               schema:
-                oneOf:
-                  - type: object
-                    properties:
-                      invite:
-                        type: string
-                  - type: object
-                    properties:
-                      deleted:
-                        type: string
-                  - type: object
-                    properties:
-                      error:
-                        type: string
-
+                $ref: "#/components/schemas/InviteResponse"
+        "4xx":
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
 components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: query
+      name: API_KEY
   parameters:
     AccountParam:
       name: account
@@ -234,13 +258,6 @@ components:
       required: true
       schema:
         type: string
-    ApiKeyQuery:
-      name: API_KEY
-      in: query
-      required: true
-      schema:
-        type: string
-
   schemas:
     BoardListEntry:
       type: object
@@ -259,9 +276,11 @@ components:
           type: array
           items:
             type: string
-
     Board:
       type: object
+      required:
+        - edges
+        - nodes
       properties:
         url:
           type: string
@@ -274,44 +293,55 @@ components:
         edges:
           type: array
           items:
-            $ref: '#/components/schemas/Edge'
+            $ref: "#/components/schemas/Edge"
         nodes:
           type: array
           items:
-            $ref: '#/components/schemas/Node'
+            $ref: "#/components/schemas/Node"
         kits:
           type: array
           items:
-            type: object
-            properties:
-              url: 
-                type: string
-              title: 
-                type: string
-              description: 
-                type: string
-              version: 
-                type: string
-              tags: 
-                type: array
-                items: 
-                  type: string
-                  enum:
-                    - deprecated
-                    - experimental
-            required:
-              - url
+            $ref: "#/components/schemas/Kit"
         graphs:
           type: object
           additionalProperties:
-            $ref: '#/components/schemas/Board'
+            $ref: "#/components/schemas/Board"
         args:
           type: object
           additionalProperties: true
+    Edge:
+      type: object
       required:
-        - nodes
-        - edges
-
+        - from
+        - to
+      properties:
+        from:
+          type: string
+        to:
+          type: string
+        in:
+          type: string
+        out:
+          type: string
+        optional:
+          type: boolean
+        constant:
+          type: boolean
+    Node:
+      type: object
+      required:
+        - id
+        - type
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        configuration:
+          type: object
+          additionalProperties: true
+        metadata:
+          $ref: "#/components/schemas/NodeMetaData"
     NodeMetaData:
       type: object
       properties:
@@ -334,63 +364,41 @@ components:
               - type: string
                 enum:
                   - start
-              - $ref: '#/components/schemas/StartTag'
-    
-    Node:
-      type: array
-      items:
-        type: object
-        properties:
-          id:
-            type: string
-          type:
-            type: string
-          configuration:
-            type: object
-            additionalProperties: true 
-          metadata:
-            $ref: '#/components/schemas/NodeMetaData'
-        required:
-          - id
-          - type
-
+              - $ref: "#/components/schemas/StartTag"
     StartTag:
       type: object
+      required:
+        - type
       properties:
         type:
           type: string
         label:
-          $ref: '#/components/schemas/StartLabel'
-      required:
-        - type
-
+          $ref: "#/components/schemas/StartLabel"
     StartLabel:
       type: string
       enum:
         - default
         - describe
-
-    Edge:
-      type: array
-      items:
-        type: object
-        properties:
-          from: 
+    Kit:
+      type: object
+      required:
+        - url
+      properties:
+        url:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        version:
+          type: string
+        tags:
+          type: array
+          items:
             type: string
-          to: 
-            type: string
-          in: 
-            type: string
-          out: 
-            type: string
-          optional:
-            type: boolean
-          constant:
-            type: boolean
-        required:
-          - from
-          - to
-    
+            enum:
+              - deprecated
+              - experimental
     Schema:
       type: object
       properties:
@@ -407,7 +415,7 @@ components:
         properties:
           type: object
           additionalProperties:
-              $ref: '#/components/schemas/Schema'
+            $ref: "#/components/schemas/Schema"
         required:
           type: array
           items:
@@ -442,20 +450,19 @@ components:
         additionalProperties:
           oneOf:
             - type: boolean
-            - $ref: '#/components/schemas/Schema'
-        items: 
+            - $ref: "#/components/schemas/Schema"
+        items:
           oneOf:
-            - $ref: '#/components/schemas/Schema'
+            - $ref: "#/components/schemas/Schema"
             - type: array
               items:
-                $ref: '#/components/schemas/Schema'
+                $ref: "#/components/schemas/Schema"
         minItems:
-          type: number
+          type: integer
         examples:
           type: array
           items:
             type: string
-
     ApiDescription:
       type: object
       properties:
@@ -468,17 +475,64 @@ components:
         description:
           type: string
         metadata:
-          type: object
+          $ref: "#/components/schemas/ApiMetadata"
+    ApiMetadata:
+      type: object
+      properties:
+        icon:
+          type: string
+        comments:
+          type: array
+          items:
+            $ref: "#/components/schemas/Comment"
+    Comment:
+      type: object
+      properties:
+        id:
+          type: string
+        text:
+          type: string
+        metadata:
+          $ref: "#/components/schemas/NodeMetaData"
+    BoardCreationResponse:
+      type: object
+      properties:
+        created:
+          type: string
+    ApiInvokeRequest:
+      type: object
+      properties:
+        $key:
+          type: string
+    InviteListResponse:
+      type: object
+      properties:
+        invites:
+          type: array
+          items:
+            type: string
+    InviteRequest:
+      type: object
+      properties:
+        delete:
+          type: string
+    InviteResponse:
+      type: object
+      oneOf:
+        - type: object
           properties:
-            icon:
+            invite:
               type: string
-            comments:
-              type: object
-              properties:
-                id:
-                  type: string
-                text:
-                  type: string
-                metadata:
-                  $ref: '#/components/schemas/NodeMetaData'
-          additionalProperties: true
+        - type: object
+          properties:
+            deleted:
+              type: string
+        - type: object
+          properties:
+            error:
+              type: string
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
