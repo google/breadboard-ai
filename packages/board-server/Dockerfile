@@ -1,5 +1,6 @@
-# Build stage
-FROM node:20-slim AS build
+# Use a base image that supports multiple platforms for the build stage
+FROM --platform=$BUILDPLATFORM node:20 AS build
+
 WORKDIR /build
 
 # Copy the entire monorepo
@@ -12,8 +13,8 @@ RUN npm ci
 WORKDIR /build/packages/board-server
 RUN npm run build
 
-# Production stage
-FROM node:20-slim
+# Use a lightweight base image for the runtime stage
+FROM --platform=$TARGETPLATFORM node:20
 
 ARG STORAGE_BACKEND
 ARG ALLOWED_ORIGINS=""
@@ -36,4 +37,4 @@ RUN npm install --only=production && \
     npm install -g tsx
 
 EXPOSE 3000
-CMD ["node", "dist/server/index.js", "--host=0.0.0.0" ]
+CMD ["node", "dist/server/index.js", "--host=0.0.0.0"]

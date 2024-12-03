@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 env:
   REGISTRY: ghcr.io
@@ -87,6 +90,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: all
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -104,14 +112,13 @@ jobs:
           context: .
           file: ./packages/board-server/Dockerfile
           cache-from: |
-            type=gha,ref=${{ needs.setup.outputs.board_server_sqlite_image_name }}
-            type=registry,ref=${{ needs.setup.outputs.board_server_sqlite_image_path }}
-          cache-to: type=gha,mode=max,ref=${{ needs.setup.outputs.board_server_sqlite_image_name }}
-          push: true
+            ${{ github.event_name != 'pull_request' && format('type=gha,ref={0}', needs.setup.outputs.board_server_sqlite_image_name) || 'type=gha,scope=pr' }}
+            ${{ github.event_name != 'pull_request' && format('type=registry,ref={0}', needs.setup.outputs.board_server_sqlite_image_path) || '' }}
+          cache-to: ${{ github.event_name != 'pull_request' && format('type=gha,mode=max,ref={0}', needs.setup.outputs.board_server_sqlite_image_name) || 'type=gha,mode=max,scope=pr' }}
+          push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && !github.event.pull_request.head.repo.fork }}
           provenance: true
+          platforms: linux/amd64,linux/arm64
           tags: >
-            ${{ needs.setup.outputs.board_server_sqlite_image_path }}:${{ github.sha }},
-            ${{ needs.setup.outputs.board_server_sqlite_image_path }}:${{ needs.setup.outputs.short_hash }},
             ${{ needs.setup.outputs.board_server_sqlite_image_path }}:${{ needs.setup.outputs.package_version }},
             ${{ needs.setup.outputs.board_server_sqlite_image_path }}:latest
           build-args: |
@@ -121,6 +128,7 @@ jobs:
             breadboard=.
 
       - name: Generate artifact attestation
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && !github.event.pull_request.head.repo.fork
         uses: actions/attest-build-provenance@v1
         with:
           subject-name: ${{ needs.setup.outputs.board_server_sqlite_image_path }}
@@ -143,6 +151,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: all
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -160,16 +173,13 @@ jobs:
           context: .
           file: ./packages/board-server/Dockerfile
           cache-from: |
-            type=gha,ref=${{ needs.setup.outputs.board_server_firestore_image_name }}
-            type=registry,ref=${{ needs.setup.outputs.board_server_firestore_image_path }}
-          cache-to: |
-            type=gha,mode=max,ref=${{ needs.setup.outputs.board_server_firestore_image_name }}
-            type=registry,mode=max,ref=${{ needs.setup.outputs.board_server_firestore_image_path }}
-          push: true
+            ${{ github.event_name != 'pull_request' && format('type=gha,ref={0}', needs.setup.outputs.board_server_firestore_image_name) || 'type=gha,scope=pr' }}
+            ${{ github.event_name != 'pull_request' && format('type=registry,ref={0}', needs.setup.outputs.board_server_firestore_image_path) || '' }}
+          cache-to: ${{ github.event_name != 'pull_request' && format('type=gha,mode=max,ref={0}|type=registry,mode=max,ref={1}', needs.setup.outputs.board_server_firestore_image_name, needs.setup.outputs.board_server_firestore_image_path) || 'type=gha,mode=max,scope=pr' }}
+          push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && !github.event.pull_request.head.repo.fork }}
           provenance: true
+          platforms: linux/amd64,linux/arm64
           tags: >
-            ${{ needs.setup.outputs.board_server_firestore_image_path }}:${{ github.sha }},
-            ${{ needs.setup.outputs.board_server_firestore_image_path }}:${{ needs.setup.outputs.short_hash }},
             ${{ needs.setup.outputs.board_server_firestore_image_path }}:${{ needs.setup.outputs.package_version }},
             ${{ needs.setup.outputs.board_server_firestore_image_path }}:latest
           build-args: |
@@ -179,6 +189,7 @@ jobs:
             breadboard=.
 
       - name: Generate artifact attestation
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && !github.event.pull_request.head.repo.fork
         uses: actions/attest-build-provenance@v1
         with:
           subject-name: ${{ needs.setup.outputs.board_server_firestore_image_path }}
