@@ -142,7 +142,7 @@
     "@google-labs/tsconfig": "^0.0.1",
     "@types/mocha": "^10.0.10",
     "@types/node": "^22.0.0",
-    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/eslint-plugin": "^8.23.0",
     "@typescript-eslint/parser": "^7.18.0",
     "@web/dev-server-esbuild": "^1.0.3",
     "@web/test-runner": "^0.19.0",
