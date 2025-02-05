@@ -107,7 +107,7 @@
     "@breadboard-ai/build": "0.11.1",
     "@google-labs/core-kit": "^0.17.1",
     "@types/node": "^22.0.0",
-    "esbuild": "^0.24.0",
+    "esbuild": "^0.24.2",
     "json-schema": "^0.4.0",
     "json-schema-ref-parser": "^9.0.9",
     "prettier": "^3.4.2",

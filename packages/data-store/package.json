@@ -147,7 +147,7 @@
     "@web/dev-server-esbuild": "^1.0.3",
     "@web/test-runner": "^0.19.0",
     "ava": "^5.2.0",
-    "esbuild": "^0.24.0",
+    "esbuild": "^0.24.2",
     "typescript": "^5.6.3"
   },
   "engines": {
