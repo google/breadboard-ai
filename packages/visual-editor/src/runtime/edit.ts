@@ -52,15 +52,16 @@ import {
 } from "@breadboard-ai/types";
 import { Sandbox } from "@breadboard-ai/jsandbox";
 import { createGraphId, MAIN_BOARD_ID } from "./util";
+import * as BreadboardUI from "@breadboard-ai/shared-ui";
 
-function isGraphDescriptor(source: unknown): source is GraphDescriptor {
-  return (
-    typeof source === "object" &&
-    source !== null &&
-    "edges" in source &&
-    "nodes" in source
-  );
-}
+// function isGraphDescriptor(source: unknown): source is GraphDescriptor {
+//   return (
+//     typeof source === "object" &&
+//     source !== null &&
+//     "edges" in source &&
+//     "nodes" in source
+//   );
+// }
 
 function isModule(source: unknown): source is Module {
   return typeof source === "object" && source !== null && "code" in source;
@@ -479,9 +480,8 @@ export class Edit extends EventTarget {
   async createWorkspaceItem(
     tab: Tab | null,
     type: "declarative" | "imperative",
-    title: string,
-    id: GraphIdentifier | ModuleIdentifier = crypto.randomUUID(),
-    source?: string | URL | Module | GraphDescriptor
+    title: string | null,
+    settings: BreadboardUI.Types.SettingsStore | null
   ) {
     if (!tab) {
       return null;
@@ -493,28 +493,60 @@ export class Edit extends EventTarget {
       return null;
     }
 
+    title ??= "Untitled item";
+
     const edits: EditSpec[] = [];
     switch (type) {
       case "declarative": {
-        let board: GraphDescriptor | undefined = undefined;
-        if (source) {
-          if (typeof source === "string" || source instanceof URL) {
-            try {
-              const sourceResponse = await fetch(source);
-              board = await sourceResponse.json();
-            } catch (err) {
-              console.warn(err);
-              return;
-            }
-          } else if (isGraphDescriptor(source)) {
-            board = source;
-          }
-        }
+        const id: string = crypto.randomUUID();
+        const board: GraphDescriptor | undefined = undefined;
+        // TODO: Figure out what this code was supposed to do.
+        // if (source) {
+        //   if (typeof source === "string" || source instanceof URL) {
+        //     try {
+        //       const sourceResponse = await fetch(source);
+        //       board = await sourceResponse.json();
+        //     } catch (err) {
+        //       console.warn(err);
+        //       return;
+        //     }
+        //   } else if (isGraphDescriptor(source)) {
+        //     board = source;
+        //   }
+        // }
         await this.createSubGraph(tab, title, id, board);
         break;
       }
 
       case "imperative": {
+        const id = title.replace(/[^a-zA-Z0-9]/g, "-");
+        let source: Module | undefined = undefined;
+        const createAsTypeScript =
+          settings
+            ?.getSection(BreadboardUI.Types.SETTINGS_TYPE.GENERAL)
+            .items.get("Use TypeScript as Module default language")?.value ??
+          false;
+
+        if (createAsTypeScript) {
+          source = {
+            code: "",
+            metadata: {
+              title,
+              source: {
+                code: defaultModuleContent("typescript"),
+                language: "typescript",
+              },
+            },
+          };
+        } else {
+          source = {
+            code: defaultModuleContent(),
+            metadata: {
+              title,
+            },
+          };
+        }
+
         let module: Module | undefined = undefined;
         if (source) {
           if (typeof source === "string" || source instanceof URL) {

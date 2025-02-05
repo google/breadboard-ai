@@ -2092,44 +2092,11 @@ export class Main extends LitElement {
             ) => {
               this.showNewWorkspaceItemOverlay = false;
 
-              let source: Module | undefined = undefined;
-              const title = evt.title ?? "Untitled item";
-              let id: string = crypto.randomUUID();
-              if (evt.itemType === "imperative") {
-                id = title.replace(/[^a-zA-Z0-9]/g, "-");
-                const createAsTypeScript =
-                  this.#settings
-                    ?.getSection(BreadboardUI.Types.SETTINGS_TYPE.GENERAL)
-                    .items.get("Use TypeScript as Module default language")
-                    ?.value ?? false;
-
-                if (createAsTypeScript) {
-                  source = {
-                    code: "",
-                    metadata: {
-                      title,
-                      source: {
-                        code: defaultModuleContent("typescript"),
-                        language: "typescript",
-                      },
-                    },
-                  };
-                } else {
-                  source = {
-                    code: defaultModuleContent(),
-                    metadata: {
-                      title,
-                    },
-                  };
-                }
-              }
-
               await this.#runtime.edit.createWorkspaceItem(
                 this.tab,
                 evt.itemType,
-                title,
-                id,
-                source
+                evt.title,
+                this.#settings
               );
             }}
             @bboverlaydismissed=${() => {
