@@ -180,7 +180,7 @@
     "./packages/node-proxy-server/functions"
   ],
   "optionalDependencies": {
-    "@rollup/rollup-darwin-arm64": "^4.27.4",
+    "@rollup/rollup-darwin-arm64": "^4.34.3",
     "@rollup/rollup-linux-x64-gnu": "^4.27.4"
   },
   "dependencies": {
