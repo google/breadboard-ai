@@ -4,17 +4,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { $id as boardSchemaId } from "@google-labs/breadboard-schema/breadboard.schema.json" with { type: "json" };
+import bglSchema from "@google-labs/breadboard-schema/breadboard.schema.json" with { type: "json" };
 import fs from "fs";
 import { Schema, createGenerator, type Config } from "ts-json-schema-generator";
-import { DEFAULT_CONFIG } from "../generate";
-import { ABSOLUTE_SCHEMA_PATH } from "./constants";
 import { sortObject } from "./sort-objects";
-export function generateSchemaFile(
-  conf: Partial<Config> = {},
-  postProcessor: (s: Schema) => Schema = (s: Schema): Schema => {
-
-    const graphDescriptorRef = `${boardSchemaId}#/definitions/GraphDescriptor`;
+export function generateSchemaFile({
+  destination,
+  conf,
+  bglSchemaRef = bglSchema.$id,
+  postProcessor = (s: Schema): Schema => {
+    const graphDescriptorRef = `${bglSchemaRef}#/definitions/GraphDescriptor`;
 
     s.definitions!["Board"] = {
       ...(s.definitions!["Board"] as Schema),
@@ -24,27 +23,24 @@ export function generateSchemaFile(
     } satisfies Schema;
 
     return sortObject(s);
-  }
-) {
+  },
+}: {
+  destination: string;
+  conf: Partial<Config>;
+  bglSchemaRef?: string;
+  postProcessor?: (s: Schema) => Schema;
+}) {
   console.debug(
     "Generating schema with config:",
     JSON.stringify(conf, null, 2)
   );
 
-  const mergedConfig: Config = {
-    ...DEFAULT_CONFIG,
-    ...conf,
-  };
-
   const schema: Schema = postProcessor(
-    createGenerator(mergedConfig).createSchema(mergedConfig.type)
+    createGenerator(conf).createSchema(conf.type)
   );
 
   const schemaString = JSON.stringify(schema, null, "\t");
-  fs.writeFileSync(ABSOLUTE_SCHEMA_PATH, schemaString);
+  fs.writeFileSync(destination, schemaString);
 
-  return {
-    destination: ABSOLUTE_SCHEMA_PATH,
-    schema,
-  };
+  return schema;
 }
