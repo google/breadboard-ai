@@ -152,7 +152,7 @@
     "idb-keyval": "^6.2.1",
     "lit": "^3.2.1",
     "markdown-it": "^14.1.0",
-    "pixi.js": "^8.6.5",
+    "pixi.js": "^8.7.3",
     "signal-polyfill": "^0.2.2",
     "signal-utils": "^0.21.1"
   }
