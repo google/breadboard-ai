@@ -27,6 +27,7 @@
         "default": "./dist/graph.js"
       }
     },
+    "./package.json": "./package.json",
     "./subschema.js": {
       "import": {
         "types": "./dist/subschema.d.ts",
