@@ -12,13 +12,14 @@
     "module": "NodeNext",
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "outDir": "./dist",
+    "outDir": "./dist/lib",
     "preserveWatchOutput": true,
     "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
     "target": "ES2022",
+    "tsBuildInfoFile": "dist/lib/.tsbuildinfo",
     "resolveJsonModule": true
   },
-  "include": ["src/**/*", "tests/**/*"]
+  "include": ["src/**/*"]
 }

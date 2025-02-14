@@ -9,6 +9,7 @@
   "type": "module",
   "scripts": {
     "build": "wireit",
+    "build:esbuild": "wireit",
     "build:tsc": "wireit",
     "build:vite": "wireit",
     "copy-assets": "wireit",
@@ -32,6 +33,9 @@
         "build:tsc"
       ]
     },
+    "build:esbuild": {
+      "command": "tsx scripts/build.ts"
+    },
     "build:vite": {
       "command": "vite build",
       "dependencies": [
@@ -43,7 +47,7 @@
       ]
     },
     "build:tsc": {
-      "command": "tsc --pretty",
+      "command": "tsc -b tsconfig.lib.json --pretty",
       "clean": "if-file-deleted",
       "files": [
         "src/"
