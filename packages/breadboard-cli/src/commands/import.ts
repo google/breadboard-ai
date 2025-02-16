@@ -52,5 +52,5 @@ const outputBoard = async (
     path.resolve(process.cwd(), outputPath),
     `${boardName}.json`
   );
-  writeFile(boardPath, boardJSON, { encoding: "utf-8" });
+  await writeFile(boardPath, boardJSON, { encoding: "utf-8" });
 };
