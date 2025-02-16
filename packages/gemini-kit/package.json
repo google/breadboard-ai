@@ -102,7 +102,7 @@
   "devDependencies": {
     "@google-labs/breadboard-cli": "^0.12.1",
     "@google-labs/tsconfig": "^0.0.1",
-    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/eslint-plugin": "^8.24.0",
     "@typescript-eslint/parser": "^7.18.0",
     "typescript": "^5.7.3"
   },
