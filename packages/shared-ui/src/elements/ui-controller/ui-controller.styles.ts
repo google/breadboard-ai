@@ -387,6 +387,8 @@ export const styles = css`
           & .url {
             font: 400 var(--bb-body-small) / var(--bb-body-line-height-small)
               var(--bb-font-family);
+            max-width: 200px;
+            overflow: hidden;
             padding: var(--bb-grid-size-2);
             border: 1px solid var(--bb-neutral-300);
             border-radius: var(--bb-grid-size);
