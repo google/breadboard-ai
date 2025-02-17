@@ -1,0 +1,160 @@
+{
+	"$id": "https://raw.githubusercontent.com/breadboard-ai/breadboard/main/packages/manifest/bbm.schema.json",
+	"$ref": "#/definitions/BreadboardManifest",
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"definitions": {
+		"Board": {
+			"$ref": "https://raw.githubusercontent.com/breadboard-ai/breadboard/main/schema/breadboard.schema.json#/definitions/GraphDescriptor",
+			"description": "A reference to the BGL schema GraphDescriptor type.",
+			"type": "object"
+		},
+		"BoardReference": {
+			"anyOf": [
+				{
+					"$ref": "#/definitions/ResourceReference"
+				},
+				{
+					"$ref": "#/definitions/Board"
+				}
+			],
+			"description": "Union of  {@link  ResourceReference }  and  {@link  Board }"
+		},
+		"BreadboardManifest": {
+			"additionalProperties": false,
+			"description": "A Breadboard Manifest.\n\nContains references to boards and other manifests.",
+			"examples": [
+				{
+					"title": "Empty Manifest"
+				},
+				{
+					"boards": [],
+					"manifests": [],
+					"title": "Manifest with empty lists"
+				},
+				{
+					"boards": [
+						{
+							"title": "My First Board",
+							"url": "https://gist.githubusercontent.com/user/SOME_ID/raw/board.bgl.json",
+							"version": "1.0.0"
+						},
+						{
+							"title": "My Second Board",
+							"url": "./boards/board.bgl.json"
+						}
+					],
+					"manifests": [
+						{
+							"title": "Gist Manifest",
+							"url": "https://gist.githubusercontent.com/user/SOME_ID/raw/manifest.bbm.json"
+						}
+					]
+				},
+				{
+					"boards": [
+						{
+							"edges": [],
+							"nodes": [],
+							"title": "My First Board"
+						}
+					],
+					"title": "Manifest with concrete boards"
+				}
+			],
+			"properties": {
+				"$schema": {
+					"$ref": "#/definitions/Reference"
+				},
+				"boards": {
+					"items": {
+						"$ref": "#/definitions/BoardReference"
+					},
+					"type": "array"
+				},
+				"manifests": {
+					"items": {
+						"$ref": "#/definitions/ManifestReference"
+					},
+					"type": "array"
+				},
+				"reference": {
+					"$ref": "#/definitions/Reference"
+				},
+				"title": {
+					"$ref": "#/definitions/Title"
+				}
+			},
+			"type": "object"
+		},
+		"ManifestReference": {
+			"anyOf": [
+				{
+					"$ref": "#/definitions/ResourceReference"
+				},
+				{
+					"$ref": "#/definitions/BreadboardManifest"
+				}
+			],
+			"description": "Union of  {@link  ResourceReference }  and  {@link  BreadboardManifest }"
+		},
+		"Reference": {
+			"anyOf": [
+				{
+					"$ref": "#/definitions/UriReference"
+				},
+				{
+					"$ref": "#/definitions/RelativeReference"
+				}
+			],
+			"description": "A reference to a resource."
+		},
+		"RelativeReference": {
+			"description": "A reference to a resource relative to the Uri of the parent resource.",
+			"examples": [
+				"../boards/board.bgl.json",
+				"../manifests/manifest.bbm.json",
+				"./board.bgl.json",
+				"./manifest.bbm.json",
+				"board.bgl.json",
+				"manifest.bbm.json"
+			],
+			"pattern": "^(\\.\\/|\\.\\.\\/|[a-zA-Z0-9_.-]+\\/)*[a-zA-Z0-9_.-]+$",
+			"type": "string"
+		},
+		"ResourceReference": {
+			"additionalProperties": false,
+			"description": "A resource that definitely has a reference.\n\nAlso has a title.",
+			"properties": {
+				"reference": {
+					"$ref": "#/definitions/Reference"
+				},
+				"title": {
+					"$ref": "#/definitions/Title"
+				}
+			},
+			"required": [
+				"reference"
+			],
+			"type": "object"
+		},
+		"Title": {
+			"examples": [
+				"Gist Manifest",
+				"My First Board"
+			],
+			"type": "string"
+		},
+		"UriReference": {
+			"description": "A URI reference.",
+			"examples": [
+				"file:///path/to/board.bgl.json",
+				"file:///path/to/manifest.bbm.json",
+				"https://example.com/board.bgl.json",
+				"https://example.com/manifest.bbm.json",
+				"https://example.com/manifests/manifest.bbm.json"
+			],
+			"format": "uri-reference",
+			"type": "string"
+		}
+	}
+}

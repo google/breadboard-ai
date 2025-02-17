@@ -19,7 +19,9 @@
     "./*": [
       "./dist/*"
     ],
-    "./bbm.schema.json": "./bbm.schema.json"
+    "./bbm.schema.json": "./bbm.schema.json",
+    "./head.bbm.schema.json": "./head.bbm.schema.json",
+    "./local.bbm.schema.json": "./local.bbm.schema.json"
   },
   "files": [
     "**/*.ts",
@@ -67,7 +69,7 @@
         "../../core/tsconfig/base.json"
       ],
       "output": [
-        "bbm.schema.json"
+        "*.schema.json"
       ]
     },
     "build:ts": {

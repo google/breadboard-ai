@@ -5,14 +5,13 @@
  */
 
 import fs from "fs";
-import path from "path";
 import {
   ABSOLUTE_PACKAGE_JSON_PATH,
   GITHUB_OWNER,
   GITHUB_REPO,
   PACKAGE_NAME,
   REPO_PACKAGE_PATH,
-  SCHEMA_FILE_NAME
+  SCHEMA_FILE_NAME,
 } from "./constants";
 
 /**
@@ -20,13 +19,18 @@ import {
  * @param mode "head" | "tag" - "head" for the main branch, "tag" for the tag associated with the current package version
  * @returns The schema ID for the Breadboard Manifest schema.
  */
-export function generateSchemaId(
-  mode: "head" | "tag" = "head",
-  schemaPath: string = SCHEMA_FILE_NAME
-): string {
-  const ref = mode === "head" ? "main" : getTagRef();
-
-  return `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${ref}/${REPO_PACKAGE_PATH}/${schemaPath}`;
+export function generateSchemaId({
+  owner = GITHUB_OWNER,
+  repo = GITHUB_REPO,
+  ref = "main",
+  schemaPath = `${REPO_PACKAGE_PATH}/${SCHEMA_FILE_NAME}`,
+}: {
+  owner?: string;
+  repo?: string;
+  ref?: "main" | string
+  schemaPath?: string;
+} = {}): string {
+  return `https://raw.githubusercontent.com/${owner}/${repo}/${ref}/${schemaPath}`;
 }
 
 export function getTagRef(): string {
