@@ -162,7 +162,7 @@
     "eslint-plugin-expect-type": "^0.6.2",
     "npm-ci": "^0.0.2",
     "rimraf": "^6.0.1",
-    "rollup": "^4.34.7",
+    "rollup": "^4.34.8",
     "rollup-plugin-dts": "^6.1.1",
     "syncpack": "^13.0.2",
     "typescript": "^5.7.3",
